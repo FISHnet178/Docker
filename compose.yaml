@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  fishnet-app:
+    build: 
+      context: C:\xampp\htdocs\FISHnet\Dockerfile
+      dockerfile: Dockerfile
+    container_name: fishnet-app
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - fishnet-db
+    ports:
+      - "8000:80"
+
+  fishnet-db:
+    container_name: fishnet-db
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: Cooperativa
+      MYSQL_USER: Nahuel
+      MYSQL_PASSWORD: River178334$
+    ports:
+      - "6033:3306"
+    volumes:
+      - ./migraciones/initdb:/docker-entrypoint-initdb.d
