@@ -1,13 +1,12 @@
-FROM php:8.2-apache
+FROM ubuntu:22.04
 
-# Habilitar extensiones necesarias para MySQL
-RUN docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable mysqli pdo_mysql
+RUN apt-get update && apt-get install -y cron mariadb-client bash
 
-# Copiar el código de tu app
-COPY . /var/www/html/
+COPY backup.sh /backup.sh
+COPY crontab.txt /etc/cron.d/backup-cron
 
-# Dar permisos a Apache
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+RUN chmod 0644 /etc/cron.d/backup-cron && chmod +x /backup.sh
 
-EXPOSE 80
+RUN crontab /etc/cron.d/backup-cron
+
+CMD ["cron", "-f"]
